@@ -53,29 +53,30 @@ export class BillPdfService {
 
    
 
-  jsPdfInvoiceV1(props: Bill) {
-        
-    // Tax Information    
-    let billContent = props.invoice.invContent;
+  jsPdfInvoiceV1(bill: Bill): string {            
     // Section 0 # Add font and Draw title
     const doc = new jsPDF('p', 'mm', 'a4');
+
     let v1Template = new BillTemplateV1(doc);                         
+    bill = v1Template.preProcess(bill);
+
     v1Template.initialDraw();
     //Section 1 # Customer & Company
-    v1Template.drawCompanyAndCustomerDetails(props.company,props.customer);
+    v1Template.drawCompanyAndCustomerDetails(bill.company,bill.customer);
     //Section 2 # Invoice basic details
-    v1Template.drawInvoiceBasicDetails(props);
+    v1Template.drawInvoiceBasicDetails(bill);
     //Section 3 # Product details
+    let billContent = bill.invoice.invContent;
     v1Template.drawProductItemsPanel(billContent);
     //Section 4 # Draw HSN table    
     let footerStartLine = v1Template.pageHeight - 50;    
     v1Template.drawHsnTable(footerStartLine,billContent);    
     //Section 5 # Draw company & declaration    
-    v1Template.drawDeclarationPanleContent(footerStartLine,props.company?.name)                    
+    v1Template.drawDeclarationPanleContent(footerStartLine,bill.company?.name)                    
     //Section 6 # Draw footer info and margins
     v1Template.drawFooterBottom(footerStartLine);
     // Save the PDF
-    const pdfPath = path.join(__dirname, props.fileName);
+    const pdfPath = path.join(__dirname, bill.fileName);
     doc.save(pdfPath);
     return pdfPath;
   }

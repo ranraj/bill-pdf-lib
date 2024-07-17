@@ -58,6 +58,7 @@ export interface Bill{
     invEwayBillNo?: string;
     label?: string;
     num?: number;
+    gstType?: GSTType;
     invDate?: string;
     invGenDate?: string;
     invContent: InvoiceContent, 

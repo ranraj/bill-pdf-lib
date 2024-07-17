@@ -277,7 +277,7 @@ export class BillTemplateV1 {
   }
   private drawHsnTableContent(billContent: InvoiceContent) {
     let hsnGroups = this.groupByHsnCode(billContent.billItems);
-    let hsnCount = 0;
+    let hsnCount = 0;    
     for (let key in hsnGroups) {
       let orderItems = hsnGroups[key];
       this.doc.text(key, pageConfig.margin.left + pageConfig.padding, this.increaseLineCursor());
@@ -299,7 +299,7 @@ export class BillTemplateV1 {
     if (hsnCount == 2) {
       this.increaseLineCursor(1)
     } else {
-      this.increaseLineCursor(2)
+      this.increaseLineCursor(1)
     }
   }
   private drawHsnTableTotalContent(billContent: InvoiceContent, currencyType: CurrencyType) {
@@ -387,6 +387,17 @@ export class BillTemplateV1 {
       }
       return acc;
     }, {} as { [key: string]: GroupedItems });
+  }
+  preProcess(bill:Bill): Bill {
+    let invContent = bill.invoice.invContent;
+    invContent.cgst= this.currencyPipe.transform(invContent.cgst,invContent.currencyType);
+    invContent.sgst= this.currencyPipe.transform(invContent.sgst,invContent.currencyType);
+    invContent.igst= this.currencyPipe.transform(invContent.igst,invContent.currencyType);
+    invContent.total= this.currencyPipe.transform(invContent.total,invContent.currencyType);
+    invContent.taxableAmount= this.currencyPipe.transform(invContent.taxableAmount,invContent.currencyType);
+        
+    //bill.invoice.invContent = transformedBillContent;
+    return bill;
   }
 }
 
